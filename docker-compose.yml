@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: crm-mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+  server:
+    build:
+      context: ./server
+    container_name: crm-server
+    restart: unless-stopped
+    ports:
+      - '4000:4000'
+    environment:
+      - PORT=4000
+      - MONGODB_URI=mongodb://mongo:27017/crm
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=ChangeMe123
+      - JWT_SECRET=supersecretjwtkey
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:
